@@ -2,7 +2,7 @@
 
 # Absinthe one_of
 
-`:absinthe_one_of` helps you create a GraphQL Input Union Type using Absinthe, allowing only one field to be non-null among several options.
+Support an Input Union Type System Directive in Absinthe.
 
 ## Installation
 
@@ -11,7 +11,7 @@ Add `:absinthe_one_of` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps() do
   [
-    {:absinthe_one_of, "~> 0.1.0"}
+    {:absinthe_one_of, "~> 1.0.0"}
   ]
 end
 ```
@@ -81,7 +81,7 @@ end
 
 ### Step 3: Testing
 
-To write tests for your implementation, you can refer to the example tests provided in [test/absinthe_one_of_test.exs](test/absinthe_one_of_test.exs). These tests demonstrate how to validate the functionality of the one_of directive and ensure that only one field is non-null among several options.
+To write tests for your implementation, you can refer to the example tests provided in `test/absinthe_one_of_test.exs`. These tests demonstrate how to validate the functionality of the one_of directive and ensure that only one field is non-null among several options.
 
 
 ## Inspiration
@@ -93,4 +93,4 @@ You can read the original article [Creating an Input Union Type System Directive
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+This project is licensed under the MIT License - see the `LICENSE` file for details.
