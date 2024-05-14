@@ -5,7 +5,7 @@ defmodule AbsintheOneOf.MixProject do
     [
       app: :absinthe_one_of,
       version: "1.0.0",
-      elixir: "~> 1.16",
+      elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: description(),
@@ -39,7 +39,7 @@ defmodule AbsintheOneOf.MixProject do
   defp package() do
     [
       name: :absinthe_one_of,
-      licenses: ["MIT License"],
+      licenses: ["MIT"],
       links: %{
         "GitHub" => "https://github.com/rudebono/absinthe_one_of",
         "Docs" => "https://hexdocs.pm/absinthe_one_of"
