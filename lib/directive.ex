@@ -1,4 +1,6 @@
 defmodule AbsintheOneOf.Directive do
+  @moduledoc false
+
   use Absinthe.Schema.Prototype
 
   directive :one_of do

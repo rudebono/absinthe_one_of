@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+    inputs:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      MIX_ENV: test
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v4
+
+      - name: Setup Erlang OTP/Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: 26.2.5
+          elixir-version: 1.16.2-otp-26
+
+      - name: Cache dependencies restore
+        id: cache-dependencies-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            _build
+            deps
+          key: test-deps-${{ hashFiles('mix.lock') }}
+
+      - name: Install dependencies
+        if: steps.cache-dependencies-restore.outputs.cache-hit != 'true'
+        run: |
+          mix deps.get
+          mix deps.compile
+
+      - name: Cache dependencies save
+        if: steps.cache-dependencies-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            _build
+            deps
+          key: ${{ steps.cache-dependencies-restore.outputs.cache-primary-key }}
+
+      - name: Compile
+        run: mix compile --all-warnings --warnings-as-errors
+
+      - name: Check format
+        run: mix format --check-formatted
+
+      - name: Check credo
+        run: mix credo --all
+
+      - name: Cache plt restore
+        id: cache-plt-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            _build/*/*.plt
+            _build/*/*.plt.hash
+          key: test-plt-${{ hashFiles('mix.lock') }}
+
+      - name: Create plt
+        if: steps.cache-plt-restore.outputs.cache-hit != 'true'
+        run: mix dialyzer --plt
+
+      - name: Cache plt save
+        if: steps.cache-plt-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            _build/*/*.plt
+            _build/*/*.plt.hash
+          key: ${{ steps.cache-plt-restore.outputs.cache-primary-key }}
+
+      - name: Check dialyzer
+        run: mix dialyzer --format github
+
+      - name: Check test
+        run: mix test --all-warnings --warnings-as-errors

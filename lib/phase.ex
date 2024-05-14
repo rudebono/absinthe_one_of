@@ -1,4 +1,6 @@
 defmodule AbsintheOneOf.Phase do
+  @moduledoc false
+
   @behaviour Absinthe.Phase
 
   @impl true

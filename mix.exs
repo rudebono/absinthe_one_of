@@ -20,8 +20,10 @@ defmodule AbsintheOneOf.MixProject do
   defp deps() do
     [
       {:absinthe, "~> 1.7"},
-      {:absinthe_phoenix, "~> 2.0", only: :test},
-      {:jason, "~> 1.4", only: :test}
+      {:absinthe_phoenix, "~> 2.0", only: :test, runtime: false},
+      {:jason, "~> 1.4", only: :test},
+      {:dialyxir, "~> 1.4", only: :test, runtime: false},
+      {:credo, "~> 1.7", only: :test, runtime: false}
     ]
   end
 end
