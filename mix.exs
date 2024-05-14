@@ -17,7 +17,9 @@ defmodule AbsintheOneOf.MixProject do
     ]
   end
 
-  defp deps do
-    []
+  defp deps() do
+    [
+      {:absinthe, "~> 1.7"}
+    ]
   end
 end
