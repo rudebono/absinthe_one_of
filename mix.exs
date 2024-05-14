@@ -44,7 +44,7 @@ defmodule AbsintheOneOf.MixProject do
         "GitHub" => "https://github.com/rudebono/absinthe_one_of",
         "Docs" => "https://hexdocs.pm/absinthe_one_of"
       },
-      files: ~w(lib priv .formatter.exs mix.exs README* LICENSE*)
+      files: ~w(lib .formatter.exs mix.exs README* LICENSE*)
     ]
   end
 
