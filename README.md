@@ -1,3 +1,5 @@
+[![CI](https://github.com/rudebono/absinthe_one_of/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/rudebono/absinthe_one_of/actions/workflows/ci.yaml)
+
 # Absinthe one_of
 
 `:absinthe_one_of` helps you create a GraphQL Input Union Type using Absinthe, allowing only one field to be non-null among several options.
