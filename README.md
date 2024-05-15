@@ -4,6 +4,17 @@
 
 Support an Input Union Type System Directive in Absinthe.
 
+## Inspiration
+
+This package was inspired by an article written by [Maarten Van Vliet](https://github.com/maartenvanvliet).
+
+You can read the original article [Creating an Input Union Type System Directive in Absinthe](https://maartenvanvliet.nl/2022/04/28/absinthe_input_union/).
+
+## Key Improvements
+
+- **Nested Objects**: Allows for `one_of` validation within nested object structures.
+- **Nested List Objects**: Supports `one_of` validation within nested lists of objects.
+
 ## Installation
 
 Add `:absinthe_one_of` to your list of dependencies in `mix.exs`:
@@ -11,7 +22,7 @@ Add `:absinthe_one_of` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps() do
   [
-    {:absinthe_one_of, "~> 1.0.0"}
+    {:absinthe_one_of, "~> 1.1.0"}
   ]
 end
 ```
@@ -82,14 +93,6 @@ end
 ### Step 3: Testing
 
 To write tests for your implementation, you can refer to the example tests provided in `test/absinthe_one_of_test.exs`. These tests demonstrate how to validate the functionality of the one_of directive and ensure that only one field is non-null among several options.
-
-
-## Inspiration
-
-This package was inspired by an article written by Maarten Van Vliet.
-
-You can read the original article [Creating an Input Union Type System Directive in Absinthe](https://maartenvanvliet.nl/2022/04/28/absinthe_input_union/).
-
 
 ## License
 
