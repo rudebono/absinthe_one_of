@@ -18,15 +18,14 @@ defmodule AbsintheOneOf.Phase do
       {nil, 0} ->
         node
 
-      {invalid_node, count} ->
-        Absinthe.Phase.put_error(node, error(invalid_node, count))
+      {name, count} ->
+        Absinthe.Phase.put_error(node, error(name, count))
     end
   end
 
   defp prewalk(node), do: node
 
-  @spec find_invalid(node :: Absinthe.Blueprint.node_t()) ::
-          {nil | Absinthe.Blueprint.node_t(), integer()}
+  @spec find_invalid(node :: map()) :: {nil | String.t(), integer()}
   defp find_invalid(
          %{
            input_value: %Absinthe.Blueprint.Input.Value{
@@ -37,9 +36,9 @@ defmodule AbsintheOneOf.Phase do
     Enum.reduce_while(
       items,
       {nil, 0},
-      fn item, {invalid_node, count} ->
-        if invalid_node do
-          {:halt, {invalid_node, count}}
+      fn item, {name, count} ->
+        if name do
+          {:halt, {name, count}}
         else
           {:cont, find_invalid(%{name: node.name, input_value: item})}
         end
@@ -59,11 +58,11 @@ defmodule AbsintheOneOf.Phase do
       if valid?(node) do
         {nil, 0}
       else
-        {node, Enum.count(fields)}
+        {node.name, Enum.count(fields)}
       end,
-      fn field, {invalid_node, count} ->
-        if invalid_node do
-          {:halt, {invalid_node, count}}
+      fn field, {name, count} ->
+        if name do
+          {:halt, {name, count}}
         else
           {:cont, find_invalid(field)}
         end
@@ -91,12 +90,11 @@ defmodule AbsintheOneOf.Phase do
 
   defp valid?(_node), do: true
 
-  @spec error(node :: Absinthe.Blueprint.node_t(), count :: integer()) :: Absinthe.Phase.Error.t()
-  defp error(node, count) do
+  @spec error(name :: String.t(), count :: integer()) :: Absinthe.Phase.Error.t()
+  defp error(name, count) do
     %Absinthe.Phase.Error{
       phase: __MODULE__,
-      message:
-        "OneOf Object \"#{node.name}\" must have exactly one non-null field but got #{count}."
+      message: "OneOf Object \"#{name}\" must have exactly one non-null field but got #{count}."
     }
   end
 end
