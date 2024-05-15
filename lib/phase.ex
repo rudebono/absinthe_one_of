@@ -30,6 +30,26 @@ defmodule AbsintheOneOf.Phase do
   defp find_invalid(
          %{
            input_value: %Absinthe.Blueprint.Input.Value{
+             normalized: %Absinthe.Blueprint.Input.List{items: items}
+           }
+         } = node
+       ) do
+    Enum.reduce_while(
+      items,
+      {nil, 0},
+      fn item, {invalid_node, count} ->
+        if invalid_node do
+          {:halt, {invalid_node, count}}
+        else
+          {:cont, find_invalid(%{name: node.name, input_value: item})}
+        end
+      end
+    )
+  end
+
+  defp find_invalid(
+         %{
+           input_value: %Absinthe.Blueprint.Input.Value{
              normalized: %Absinthe.Blueprint.Input.Object{fields: fields}
            }
          } = node
