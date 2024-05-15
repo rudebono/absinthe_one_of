@@ -22,7 +22,7 @@ Add `:absinthe_one_of` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps() do
   [
-    {:absinthe_one_of, "~> 1.1.0"}
+    {:absinthe_one_of, "~> 1.1"}
   ]
 end
 ```
