@@ -372,7 +372,7 @@ defmodule AbsintheOneOfTest do
             },
             "organization" => %{
               "name" => "Acme Corp",
-              "registrationNumber" => 12345
+              "registrationNumber" => 12_345
             }
           }
         }
