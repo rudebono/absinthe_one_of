@@ -24,15 +24,15 @@ defmodule AbsintheOneOfTest do
 
   defmodule Pet do
     defmodule Cat do
-      defstruct [:name, :number_of_lives, :owner]
+      defstruct [:name, :profiles, :owner]
     end
 
     defmodule Dog do
-      defstruct [:name, :wags_tail, :owner]
+      defstruct [:name, :profiles, :owner]
     end
 
     defmodule Fish do
-      defstruct [:name, :body_length_in_mm, :owner]
+      defstruct [:name, :profiles, :owner]
     end
 
     def pets(_, _, _) do
@@ -41,29 +41,36 @@ defmodule AbsintheOneOfTest do
 
     def add(
           _,
-          %{pet: %{cat: %{name: name, number_of_lives: number_of_lives, owner: owner}}},
+          %{pet: %{cat: %{name: name, profiles: profiles, owner: owner}}},
           _
         ) do
       {:ok, owner} = AbsintheOneOfTest.Owner.add(owner)
-      {:ok, %Cat{name: name, number_of_lives: number_of_lives, owner: owner}}
+      {:ok, %Cat{name: name, profiles: build_profiles(profiles), owner: owner}}
     end
 
     def add(
           _,
-          %{pet: %{dog: %{name: name, wags_tail: wags_tail, owner: owner}}},
+          %{pet: %{dog: %{name: name, profiles: profiles, owner: owner}}},
           _
         ) do
       {:ok, owner} = AbsintheOneOfTest.Owner.add(owner)
-      {:ok, %Dog{name: name, wags_tail: wags_tail, owner: owner}}
+      {:ok, %Dog{name: name, profiles: build_profiles(profiles), owner: owner}}
     end
 
     def add(
           _,
-          %{pet: %{fish: %{name: name, body_length_in_mm: body_length_in_mm, owner: owner}}},
+          %{pet: %{fish: %{name: name, profiles: profiles, owner: owner}}},
           _
         ) do
       {:ok, owner} = AbsintheOneOfTest.Owner.add(owner)
-      {:ok, %Fish{name: name, body_length_in_mm: body_length_in_mm, owner: owner}}
+      {:ok, %Fish{name: name, profiles: build_profiles(profiles), owner: owner}}
+    end
+
+    defp build_profiles(profiles) do
+      Enum.map(profiles, fn profile ->
+        [{key, value}] = Map.to_list(profile)
+        %{key: "#{key}", value: "#{value}"}
+      end)
     end
   end
 
@@ -114,21 +121,26 @@ defmodule AbsintheOneOfTest do
       field(:registration_number, non_null(:integer))
     end
 
+    object(:profile) do
+      field(:key, non_null(:string))
+      field(:value, non_null(:string))
+    end
+
     object(:cat) do
       field(:name, non_null(:string))
-      field(:number_of_lives, non_null(:integer))
+      field(:profiles, non_null(list_of(:profile)))
       field(:owner, non_null(:owner))
     end
 
     object(:dog) do
       field(:name, non_null(:string))
-      field(:wags_tail, non_null(:boolean))
+      field(:profiles, non_null(list_of(:profile)))
       field(:owner, non_null(:owner))
     end
 
     object(:fish) do
       field(:name, non_null(:string))
-      field(:body_length_in_mm, non_null(:integer))
+      field(:profiles, non_null(list_of(:profile)))
       field(:owner, non_null(:owner))
     end
 
@@ -148,6 +160,13 @@ defmodule AbsintheOneOfTest do
       field(:registration_number, non_null(:integer))
     end
 
+    input_object(:profile_input) do
+      directive(:one_of)
+      field(:number_of_lives, :integer)
+      field(:wags_tail, :boolean)
+      field(:body_length_in_mm, :integer)
+    end
+
     input_object(:pet_input) do
       directive(:one_of)
       field(:cat, :cat_input)
@@ -157,19 +176,19 @@ defmodule AbsintheOneOfTest do
 
     input_object(:cat_input) do
       field(:name, non_null(:string))
-      field(:number_of_lives, non_null(:integer))
+      field(:profiles, non_null(list_of(:profile_input)))
       field(:owner, non_null(:owner_input))
     end
 
     input_object(:dog_input) do
       field(:name, non_null(:string))
-      field(:wags_tail, non_null(:boolean))
+      field(:profiles, non_null(list_of(:profile_input)))
       field(:owner, non_null(:owner_input))
     end
 
     input_object(:fish_input) do
       field(:name, non_null(:string))
-      field(:body_length_in_mm, non_null(:integer))
+      field(:profiles, non_null(list_of(:profile_input)))
       field(:owner, non_null(:owner_input))
     end
   end
@@ -209,7 +228,10 @@ defmodule AbsintheOneOfTest do
     add(pet: $pet) {
       ... on Cat {
         name
-        numberOfLives
+        profiles {
+          key
+          value
+        }
         owner {
           ... on Person {
             name
@@ -224,7 +246,10 @@ defmodule AbsintheOneOfTest do
       }
       ... on Dog {
         name
-        wagsTail
+        profiles {
+          key
+          value
+        }
         owner {
           ... on Person {
             name
@@ -239,7 +264,10 @@ defmodule AbsintheOneOfTest do
       }
       ... on Fish {
         name
-        bodyLengthInMm
+        profiles {
+          key
+          value
+        }
         owner {
           ... on Person {
             name
@@ -262,7 +290,7 @@ defmodule AbsintheOneOfTest do
       "pet" => %{
         "cat" => %{
           "name" => "Whiskers",
-          "numberOfLives" => 9,
+          "profiles" => [%{"numberOfLives" => 9}],
           "owner" => %{
             "person" => %{
               "name" => "Alice",
@@ -278,7 +306,7 @@ defmodule AbsintheOneOfTest do
                "add" => %{
                  "__typename" => "Cat",
                  "name" => "Whiskers",
-                 "numberOfLives" => 9,
+                 "profiles" => [%{"key" => "number_of_lives", "value" => "9"}],
                  "owner" => %{
                    "__typename" => "Person",
                    "name" => "Alice",
@@ -297,7 +325,7 @@ defmodule AbsintheOneOfTest do
       "pet" => %{
         "cat" => %{
           "name" => "Whiskers",
-          "numberOfLives" => 9,
+          "profiles" => [%{"numberOfLives" => 9}],
           "owner" => %{
             "person" => %{
               "name" => "Alice",
@@ -307,7 +335,7 @@ defmodule AbsintheOneOfTest do
         },
         "dog" => %{
           "name" => "Odie",
-          "wagsTail" => true,
+          "profiles" => [%{"wagsTail" => true}],
           "owner" => %{
             "person" => %{
               "name" => "Alice",
@@ -336,7 +364,7 @@ defmodule AbsintheOneOfTest do
       "pet" => %{
         "cat" => %{
           "name" => "Whiskers",
-          "numberOfLives" => 9,
+          "profiles" => [%{"numberOfLives" => 9}],
           "owner" => %{
             "person" => %{
               "name" => "Alice",
@@ -356,6 +384,35 @@ defmodule AbsintheOneOfTest do
                %{
                  "message" =>
                    "OneOf Object \"owner\" must have exactly one non-null field but got 2."
+               }
+             ]
+           } ==
+             conn(:post, "/", %{query: @mutation, variables: variables})
+             |> call()
+             |> json_response(200)
+  end
+
+  test "one_of nested list object invalid input" do
+    variables = %{
+      "pet" => %{
+        "cat" => %{
+          "name" => "Whiskers",
+          "profiles" => [%{"numberOfLives" => 9, "wagsTail" => true}],
+          "owner" => %{
+            "person" => %{
+              "name" => "Alice",
+              "age" => 30
+            }
+          }
+        }
+      }
+    }
+
+    assert %{
+             "errors" => [
+               %{
+                 "message" =>
+                   "OneOf Object \"profiles\" must have exactly one non-null field but got 2."
                }
              ]
            } ==
